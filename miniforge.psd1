@@ -21,7 +21,7 @@
     FormatsToProcess       = @()
     NestedModules          = @()
     FunctionsToExport      = @( 
-        'invoke-MiniForge'
+        'invoke-forgeaction'
     )
     CmdletsToExport        = @()
     VariablesToExport      = @()
