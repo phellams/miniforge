@@ -382,7 +382,9 @@ Convert and hashtable into `psobject`, `pscustomobject`, `dictionary`, `SortedLi
 
 # Data Accelerators
 
-### 🔷 Iminpso
+### 🔷 New-Iminpso 
+
+**Alias**: `iminpso`
 
 Generates a `PSObject` from `hashtable`.
 
@@ -390,7 +392,9 @@ Generates a `PSObject` from `hashtable`.
 $pso = iminipso @{ prop1 = 'prop1value'; level = 1 }
 ```
 
-### 🔷  Iminipsco
+### 🔷  New-Iminipsco
+
+**Alias**: iminipsco
 
 Generates a `PSCustomObject` from `hashtable`.
 
@@ -398,7 +402,9 @@ Generates a `PSCustomObject` from `hashtable`.
 $psco = iminipsco @{ prop1 = 'prop1value'; level = 1 }
 ```
 
-### 🔷 Iminiht
+### 🔷 New-Iminiht
+
+**Alias**: iminiht
 
 Generates a `Hashtable` from `hashtable`.
 
@@ -406,7 +412,9 @@ Generates a `Hashtable` from `hashtable`.
 $psht = iminipsco @{ prop1 = 'prop1value'; level = 1 }
 ```
 
-### 🔷 iminidic
+### 🔷 New-Iminidic
+
+**Alias**: iminidic
 
 Generates a `System.Collections.Generic.Dictionary[string, object]` from `Hashtable`.
 
@@ -414,7 +422,9 @@ Generates a `System.Collections.Generic.Dictionary[string, object]` from `Hashta
 $psdic = iminidic @{ prop1 = 'prop1value'; level = 1 }
 ```
 
-### 🔷 iminisl
+### 🔷 New-Iminisl
+
+**Alias**: iminisl
 
 Generates a `System.Collections.SortedList` from `Hashtable`.
 
