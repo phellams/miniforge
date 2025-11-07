@@ -41,7 +41,7 @@
             ReleaseNotes               = @()
             Prerelease                 = ''
             RequireLicenseAcceptance   = $false
-            ExternalModuleDependencies = @()s
+            ExternalModuleDependencies = @()
             # CHOCOLATE ---------------------
             LicenseUri                 = 'https://choosealicense.com/licenses/mit'
             ProjectUri                 = 'https://gitlab.com/phellams/miniforge.git'
