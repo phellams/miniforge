@@ -95,5 +95,25 @@ $dictionary
 $sortedlist
 
 
+$MiniPSCO = iminipsco @{ Id = 1; Name = 'TestA'; Tags = @('A', 'B') }
+$MiniPSO = iminipso @{ Id = 1; Name = 'TestA'; Tags = @('A', 'B') }
+$MiniHT = iminiht @{ Id = 1; Name = 'TestA'; Tags = @('A', 'B') }
+$MiniDic = iminidic @{ Id = 1; Name = 'TestA'; Tags = @('A', 'B') }
+$MiniSl = iminisl @{ Id = 1; Name = 'TestA'; Tags = @('A', 'B') }
+
+# Verify types
+$MiniPSCO.GetType()  # PSCustomObject
+$MiniPSO.GetType()   # PSObject
+$MiniHT.GetType()    # Hashtable
+$MiniDic.GetType()   # Dictionary[string,object]
+$MiniSl.GetType()    # SortedList
+
 # Test Update action for all data types
 #Invoke-ForgeAction -Data $DataSets -Action update -Name 'Name' -Value 'UPDATED'
+
+# Test Convert-IminiData for all data types
+$MiniPSCO | Convert-IminiData -Type 'PSCustomObject'
+$MiniPSO | Convert-IminiData -Type 'PSObject'
+$MiniHT | Convert-IminiData -Type 'Hashtable'
+$MiniDic | Convert-IminiData -Type 'Dictionary'
+$MiniSl | Convert-IminiData -Type 'SortedList'
