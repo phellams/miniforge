@@ -1,12 +1,9 @@
 <div align="center">
     <H1>MINIFORGE</H1>
-    <img src="https://raw.githubusercontent.com/phellams/phellams-general-resources/main/misc/hr/wings-diamond.svg">
-    <img src="https://img.shields.io/badge/MIT-License-blue?style=flat-square&labelColor=%23002F6C&color=%23E2522F
-" alt="license" /> <img src="https://img.shields.io/badge/Utility-Module-blue?style=flat-square&labelColor=%23002F6C&color=%23E2522F
-" alt="utility-module-blue" />
+    <img src="https://raw.githubusercontent.com/phellams/phellams-general-resources/main/misc/hr/wings-diamond.svg" alt="hr">
+    <img src="https://img.shields.io/badge/MIT-License-blue?style=flat-square&labelColor=%23002F6C&color=%23E2522F" alt="license" /> <img src="https://img.shields.io/badge/Utility-Module-blue?style=flat-square&labelColor=%23002F6C&color=%23E2522F" alt="utility-module-blue" />
 </div>
 </br>
-
 
 The **MiniForge** module provides the `Invoke-ForgeAction` function (with aliases `miniforge` and `imini`), a unified tool for performing **CRUD** (Create, Read, Update, Delete) and **array manipulation** (push/pull) operations on various PowerShell data structures. It abstracts the underlying differences in how properties/keys are managed across **Hashtables**, **PSObjects**, **PSCustomObjects**, **Dictionary**, and **SortedList** types.
 
