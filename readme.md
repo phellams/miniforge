@@ -35,14 +35,31 @@ The **MiniForge** module provides the `Invoke-ForgeAction` function (with aliase
 
 ---
 
+### Installation Resources:
+ 
+|▓▓▓▓▒▒▒▒░░░|▓▓▓▓▒▒▒▒░░░|▓▓▓▓▒▒▒▒░░░|
+|-|-|-|
+|💼 Releases/Tags | <a href="https://gitlab.com/phellams/miniforge/-/releases"> <img src="https://img.shields.io/gitlab/v/release/phellams%2Fminiforge?include_prereleases&style=flat-square&logoColor=%2300B2A9&labelColor=%23CD5C5C&color=%231E3D59" alt="gitlab-release"></a> | <a href="https://gitlab.com/phellams/fastfsc/-/tags"> <img src="https://img.shields.io/gitlab/v/tag/phellams%2Fminiforge?include_prereleases&style=flat-square&logoColor=%&labelColor=%23CD5C5C&color=%231E3D59" alt="gitlab tags"></a> |
+
+
+---
+
 ## 🚀 Quick Start
 
 ```powershell
 # Import the module
 Import-Module .\miniforge.psm1
 
+# using with another module
+using module .\miniforge.psm1
+
 # Create a data object
 $data = [PSCustomObject]@{ Name = 'Test' }
+
+# or create another data type using miniforge data accelerators
+
+# SortedList 
+$sl = imini
 
 # Use the function with full syntax
 Invoke-ForgeAction -Data $data -Action create -Name 'Status' -Value 'Active'
@@ -103,6 +120,7 @@ Import-Module miniforge
 ```
 
 To find your module paths, run: `$env:PSModulePath -split ';'`
+
 
 # Cmdlets
 
@@ -352,6 +370,14 @@ $theme = Invoke-ForgeAction -Data $settings -Action read -Name 'Theme'
 
 ### 🟢 Convert-IminiData
 
+Convert and hashtable into `psobject`, `pscustomobject`, `dictionary`, `SortedList`
+
+```powershell
+@{ count=126; files=@('file1.txt', 'file2.txt') } | Convert-IminiData -Type PsCustomObject
+@{ count=126; files=@('file1.txt', 'file2.txt') } | Convert-IminiData -Type PsObject
+@{ count=126; files=@('file1.txt', 'file2.txt') } | Convert-IminiData -Type Dictionary
+@{ count=126; files=@('file1.txt', 'file2.txt') } | Convert-IminiData -Type SortedList
+```
 
 
 # Data Accelerators
@@ -524,29 +550,37 @@ Invoke-ForgeAction -Data $obj -Action push -Name 'Items' -Value 'Item1'
 
 ---
 
-## 📋 TODO
+<!-- ROADMAP -->
+# Roadmap
 
+🟡 **Task List**
 - [x] Add Support for Dictionary, SortedList
 - [ ] Add comprehensive Pester tests
 - [ ] Create module manifest (.psd1) with proper versioning
-- [ ] Add support for OrderedDictionary
+- [x] Add support for Dictionary
 - [ ] Optimize performance for large datasets
-- [ ] Add `-WhatIf` and `-Confirm` support
+- [x] Add `-WhatIf` and `-Confirm` support
 
----
 
-## 📝 License
+
+# Contributing
+
+Feel free to contribute!  Fork the repo and submit a **merge request** with your improvements.  Or, open an **issue** with the `enhancement` tag to discuss your ideas.
+
+1. Fork the Project from `git clone https://gitlab.com/phellams/miniforge.git`
+2. Create your Feature Branch check out the branch dev `git switch dev`.
+   1. `git switch -c feature/AmazingFeature`
+   2. or 
+   3. `git checkout -b feature/AmazingFeature`
+3. Commit your Changes `git commit -m 'Add some AmazingFeature'`
+4. Push to the Branch `git push origin feature/AmazingFeature`
+5. [Open a Merge Request](https://gitlab.com/phellams/miniforge/-/merge_requests/new)
+
+
+# 📝 License
 
 This module is released under the [MIT License](https://opensource.org/licenses/MIT).
 
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
----
-
-## 📧 Contact
+# 📧 Contact
 
 For issues, questions, or suggestions, please open an issue on the [GitHub repository](https://github.com/sgkens/miniforge).
