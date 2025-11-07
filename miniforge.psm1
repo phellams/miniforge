@@ -33,14 +33,14 @@ function Convert-IminiData {
             }
             'SortedList' {
                 $Data = New-Object -TypeName System.Collections.SortedList
-                $InputData.PSObject.Properties | ForEach-Object { 
-                    [void]$Data.Add($_.Name, $_.Value) 
+                $InputData.PSObject.Properties | ForEach-Object {
+                    [void]$Data.Add($_.Name, $_.Value)
                 }
             }
             'Dictionary' {
                 $Data = New-Object -TypeName 'System.Collections.Generic.Dictionary[string, object]'
-                $InputData.PSObject.Properties | ForEach-Object { 
-                    [void]$Data.Add($_.Name, $_.Value) 
+                $InputData.PSObject.Properties | ForEach-Object {
+                    [void]$Data.Add($_.Name, $_.Value)
                 }
             }
             default {
@@ -83,9 +83,9 @@ function kvinc([string]$keyName, [string]$KeyValue, [string]$type='none') {
     }
 
     $string += " `e[$($utility.kvinc_key_color)$($utility.kvinc_key_format)m$keyName`e[0m "
-    $string += " `e[$($utility.kvinc_bracket_color)$($utility.kvinc_bracket_format)m:`e[0m"
+    $string += " `e[$($utility.kvinc_bracket_color)$($utility.kvinc_bracket_format)m:`e[0m "
     $string += " `e[$($utility.kvinc_value_color)$($utility.kvinc_value_format)m$KeyValue`e[0m "
-    $string += " `e[$($utility.kvinc_bracket_color)$($utility.kvinc_bracket_format)m}`e[0m"
+    $string += " `e[$($utility.kvinc_bracket_color)$($utility.kvinc_bracket_format)m}`e[0m "
 
     return $string
 }
@@ -119,7 +119,7 @@ function logr([string]$Message, [string]$Action, [string]$Type, [string]$LogName
 
     $utility = @{
         logr_logname_color  = "95"
-        logr_logname_format = ";1"
+        logr_logname_format = ";1"22
         logr_type_format    = ";1"
         logr_action_format  = ";1"
         logr_message_color  = "90"
@@ -191,7 +191,9 @@ function check_collections_other($dataSet) {
 # IMini Data Accelerators - Function-Based Approach
 # ===================================================================
 
-function iminipsco {
+function New-Iminipsco {
+    [CmdletBinding()]
+    [Alias('iminipsco')]
     param([Hashtable]$data)
     $pso = [PSCustomObject]::new()
     if ($data) {
@@ -202,7 +204,9 @@ function iminipsco {
     return $pso
 }
 
-function iminipso {
+function New-Iminipso {
+    [CmdletBinding()]
+    [Alias('iminipso')]
     param([Hashtable]$data)
     $pso = [PSObject]::new()
     if ($data) {
@@ -213,12 +217,16 @@ function iminipso {
     return $pso
 }
 
-function iminiht {
+function New-Iminiht {
+    [CmdletBinding()]
+    [Alias('iminiht')]
     param([Hashtable]$data)
     return $data ?? @{}
 }
 
-function iminidic {
+function New-Iminidic {
+    [CmdletBinding()]
+    [Alias('iminidic')]
     param([Hashtable]$data)
     $dic = [System.Collections.Generic.Dictionary[string, object]]::new()
     if ($data) {
@@ -229,7 +237,9 @@ function iminidic {
     return $dic
 }
 
-function iminisl {
+function New-Iminisl {
+    [CmdletBinding()]
+    [Alias('iminisl')]
     param([Hashtable]$data)
     $sl = [System.Collections.SortedList]::new()
     if ($data) {
@@ -246,12 +256,12 @@ function iminisl {
 function Invoke-ForgeAction {
     <#
     .SYNOPSIS
-    Performs Create, Update, Delete (CUD) and array push/pull operations on 
+    Performs Create, Update, Delete (CUD) and array push/pull operations on
     Hashtable, PSObject, or PSCustomObject data structures.
     
     .DESCRIPTION
     This function allows for unified manipulation of key/value pairs across
-    different object types. Actions include 'add', 'update', 'remove' for 
+    different object types. Actions include 'add', 'update', 'remove' for
     properties, and 'push' and 'pull' for array-type properties.
     
     .PARAMETER Data
@@ -267,7 +277,7 @@ function Invoke-ForgeAction {
     The value to be added, updated, pushed, or pulled (removed).
     
     .PARAMETER log
-    Switch value to output debug infomation to the console 
+    Switch value to output debug infomation to the console
 
     .EXAMPLE
     $ht = @{ 'Key1' = 'Value1' }
