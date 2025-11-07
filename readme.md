@@ -1,24 +1,30 @@
-# MiniForge
+<div align="center">
+    <H1>MINIFORGE</H1>
+    <img src="https://raw.githubusercontent.com/phellams/phellams-general-resources/main/misc/hr/wings-diamond.svg">
+    <img src="https://img.shields.io/badge/MIT-License-blue?style=flat-square&labelColor=%23002F6C&color=%23E2522F
+" alt="license" /> <img src="https://img.shields.io/badge/Utility-Module-blue?style=flat-square&labelColor=%23002F6C&color=%23E2522F
+" alt="utility-module-blue" />
+</div>
+</br>
 
-<img src="https://img.shields.io/badge/mit-license-blue?style=for-the-badge" alt="license" /> <img src="https://img.shields.io/badge/utility-module-cyan?style=for-the-badge" alt="utility-module-blue" />
 
 The **MiniForge** module provides the `Invoke-ForgeAction` function (with aliases `miniforge` and `imini`), a unified tool for performing **CRUD** (Create, Read, Update, Delete) and **array manipulation** (push/pull) operations on various PowerShell data structures. It abstracts the underlying differences in how properties/keys are managed across **Hashtables**, **PSObjects**, **PSCustomObjects**, **Dictionary**, and **SortedList** types.
 
----
 
-## 📑 Table of Contents
+
+## 🟠 Table of Contents
 
 - [Quick Start](#-quick-start)
 - [Features](#features)
 - [Getting Started](#getting-started)
 - [Cmdlets](#cmdlets)
 - [Examples](#examples)
-  - [Create](#create)
-  - [Update](#update)
-  - [Push](#push)
-  - [Pull](#pull)
-  - [Delete](#delete)
-  - [Read](#read)
+  - [🟢 ***Create***](#create)
+  - [🟡 ***Update***](#update)
+  - [🟣 ***Push***](#push)
+  - [🟠 ***Pull***](#pull)
+  - [🔴 ***Delete***](#delete)
+  - [🔵 ***Read***](#read)
 - [Complete Example Workflow](#complete-example-workflow)
 - [Supported Data Types](#supported-data-types-comparison)
 - [Advanced Usage](#advanced-usage)
@@ -99,7 +105,7 @@ To find your module paths, run: `$env:PSModulePath -split ';'`
 
 ## Cmdlets
 
-### 🟡 Invoke-ForgeAction
+### 🟢 Invoke-ForgeAction
 
 **Aliases**: `miniforge`, `imini`
 
@@ -132,7 +138,7 @@ $global:__logging = $false
 
 ### **Create**
 
-✳️ **Adding a Property to a PSCustomObject**
+🟢 **Adding a Property to a PSCustomObject**
 
 ```powershell
 $obj = [PSCustomObject]@{ ID = 1 }
@@ -148,7 +154,7 @@ miniforge -Data $obj -Action create -Name 'Status' -Value 'Active'
 imini $obj create 'Status' 'Active'
 ```
 
-✳️ **Adding a Key to a Hashtable**
+🟢 **Adding a Key to a Hashtable**
 
 ```powershell
 $ht = @{ Name = 'Test' }
@@ -156,7 +162,7 @@ Invoke-ForgeAction -Data $ht -Action create -Name 'Price' -Value 99.99
 # Output: $ht now has @{ Name = 'Test'; Price = 99.99 }
 ```
 
-✳️ **Adding to a Dictionary**
+🟢 **Adding to a Dictionary**
 
 ```powershell
 $dict = [System.Collections.Generic.Dictionary[string,string]]::new()
@@ -169,7 +175,7 @@ Invoke-ForgeAction -Data $dict -Action create -Name 'Server' -Value 'localhost'
 
 ### **Update**
 
-✳️ **Updating a Key in a Hashtable**
+🟡 **Updating a Key in a Hashtable**
 
 ```powershell
 $ht = @{ Price = 100.00; Name = 'Product' }
@@ -183,7 +189,7 @@ Invoke-ForgeAction -Data $ht -Action update -Name 'Price' -Value 109.99
 miniforge $ht update 'Price' 109.99
 ```
 
-✳️ **Updating a PSCustomObject Property**
+🟡 **Updating a PSCustomObject Property**
 
 ```powershell
 $obj = [PSCustomObject]@{ Status = 'Pending'; Count = 10 }
@@ -197,7 +203,7 @@ Invoke-ForgeAction -Data $obj -Action update -Name 'Status' -Value 'Complete'
 
 ### **Push** 
 
-✳️ **Pushing an Item to an Array Property**
+🟠 **Pushing an Item to an Array Property**
 
 The `push` action appends a value to an existing array. The target property must already be an array type.
 
@@ -213,7 +219,7 @@ Invoke-ForgeAction -Data $obj -Action push -Name 'Tags' -Value 'blue'
 miniforge $obj push 'Tags' 'blue'
 ```
 
-✳️ **Pushing to a Hashtable Array**
+🟠 **Pushing to a Hashtable Array**
 
 ```powershell
 $config = @{ Servers = @('server1', 'server2') }
@@ -221,7 +227,7 @@ Invoke-ForgeAction -Data $config -Action push -Name 'Servers' -Value 'server3'
 # Output: $config.Servers is now @('server1', 'server2', 'server3')
 ```
 
-✳️ **Supported Array Types**
+🟠 **Supported Array Types**
 
 ```powershell
 # Works with: [string[]], [object[]], [int[]], [hashtable[]], [psobject[]], [pscustomobject[]]
@@ -235,7 +241,7 @@ Invoke-ForgeAction -Data $data -Action push -Name 'Numbers' -Value 4
 
 ### **Pull** 
 
-✳️ **Pulling (Removing) an Item from an Array**
+🟣 **Pulling (Removing) an Item from an Array**
 
 The `pull` action removes a specific value from an array property.
 
@@ -251,7 +257,7 @@ Invoke-ForgeAction -Data $ht -Action pull -Name 'Colors' -Value 'green'
 miniforge $ht pull 'Colors' 'green'
 ```
 
-✳️ **Removing from PSCustomObject Array**
+🟣 **Removing from PSCustomObject Array**
 
 ```powershell
 $user = [PSCustomObject]@{ Roles = @('Admin', 'Editor', 'Viewer') }
@@ -265,7 +271,7 @@ Invoke-ForgeAction -Data $user -Action pull -Name 'Roles' -Value 'Editor'
 
 ### **Delete** 
 
-✳️ **Removing a Property from a PSCustomObject**
+🔴 **Removing a Property from a PSCustomObject**
 
 The `delete` action completely removes a property or key from the data structure.
 
@@ -281,7 +287,7 @@ Invoke-ForgeAction -Data $obj -Action delete -Name 'Status'
 miniforge $obj delete 'Status'
 ```
 
-✳️ **Removing a Key from a Hashtable**
+🔴 **Removing a Key from a Hashtable**
 
 ```powershell
 $ht = @{ Price = 100.00; Name = 'Product'; SKU = 'ABC123' }
@@ -289,7 +295,7 @@ Invoke-ForgeAction -Data $ht -Action delete -Name 'SKU'
 # Output: $ht now has @{ Price = 100.00; Name = 'Product' }
 ```
 
-✳️ **Removing from Dictionary or SortedList**
+🔴 **Removing from Dictionary or SortedList**
 
 ```powershell
 $dict = [System.Collections.Generic.Dictionary[string,string]]::new()
@@ -306,7 +312,7 @@ Invoke-ForgeAction -Data $dict -Action delete -Name 'Key1'
 
 ### **Read** 
 
-✳️ **Getting a Property Value**
+🔵 **Getting a Property Value**
 
 The `read` action retrieves the value of a property or key from the data structure.
 
@@ -322,7 +328,7 @@ $id = Invoke-ForgeAction -Data $obj -Action read -Name 'ID'
 $email = miniforge $obj read 'Email'
 ```
 
-✳️ **Reading from a Hashtable**
+🔵 **Reading from a Hashtable**
 
 ```powershell
 $config = @{ Server = 'localhost'; Port = 8080; SSL = $true }
@@ -330,7 +336,7 @@ $port = Invoke-ForgeAction -Data $config -Action read -Name 'Port'
 # Output: $port contains 8080
 ```
 
-✳️ **Reading from Dictionary**
+🔵 **Reading from Dictionary**
 
 ```powershell
 $settings = [System.Collections.Generic.Dictionary[string,string]]::new()
