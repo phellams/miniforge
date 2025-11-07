@@ -1,143 +1,499 @@
-# MiniForge PowerShell Module
+# MiniForge
 
 <img src="https://img.shields.io/badge/mit-license-blue?style=for-the-badge" alt="license" /> <img src="https://img.shields.io/badge/utility-module-cyan?style=for-the-badge" alt="utility-module-blue" />
 
-The ***MiniForge*** module provides the `Invoke-miniforge` function or via alisa `miniforge` or `imini`, a unified tool for performing **CUD** (Create, Update, Delete) and **array manipulation** (push/pull) on various PowerShell data structures, including **Hashtables**, **PSObjects**, and **PSCustomObjects**. It abstracts the underlying differences in how properties/keys are managed across these types.
+The **MiniForge** module provides the `Invoke-ForgeAction` function (with aliases `miniforge` and `imini`), a unified tool for performing **CRUD** (Create, Read, Update, Delete) and **array manipulation** (push/pull) operations on various PowerShell data structures. It abstracts the underlying differences in how properties/keys are managed across **Hashtables**, **PSObjects**, **PSCustomObjects**, **Dictionary**, and **SortedList** types.
+
+---
+
+## 📑 Table of Contents
+
+- [Quick Start](#-quick-start)
+- [Features](#features)
+- [Getting Started](#getting-started)
+- [Cmdlets](#cmdlets)
+- [Examples](#examples)
+  - [Create](#create)
+  - [Update](#update)
+  - [Push](#push)
+  - [Pull](#pull)
+  - [Delete](#delete)
+  - [Read](#read)
+- [Complete Example Workflow](#complete-example-workflow)
+- [Supported Data Types](#supported-data-types-comparison)
+- [Advanced Usage](#advanced-usage)
+- [Troubleshooting](#troubleshooting)
+- [TODO](#-todo)
+- [License](#-license)
+
+---
+
+## 🚀 Quick Start
+
+```powershell
+# Import the module
+Import-Module .\miniforge.psm1
+
+# Create a data object
+$data = [PSCustomObject]@{ Name = 'Test' }
+
+# Use the function with full syntax
+Invoke-ForgeAction -Data $data -Action create -Name 'Status' -Value 'Active'
+
+# Or use the short alias
+miniforge $data update 'Status' 'Complete'
+
+# Even shorter
+imini $data read 'Status'
+```
+
+---
 
 # Features
 
-- **CUD** (Create, Update, Delete) operations on **Hashtables**, **PSObjects**, and **PSCustomObjects**
-- **array manipulation** (push/pull) on **Hashtables**, **PSObjects**, and **PSCustomObjects**
-- **Debug** logging for fine-grained control
+- **CRUD Operations** (*Create*, *Read*, *Update*, *Delete*) on:
+    - **Hashtables**
+    - **PSObjects** and **PSCustomObjects**
+    - **Dictionary** (`System.Collections.Generic.Dictionary`)
+    - **SortedList** (`System.Collections.Generic.SortedList`)
+- **Array Manipulation** (*push*, *pull*) for array-type properties in:
+    - Arrays: `[string[]]`, `[object[]]`, `[int[]]`, `[hashtable[]]`
+    - Custom arrays: `[psobject[]]`, `[pscustomobject[]]`
+- **Debug Logging** with colored console output
+    - Enable globally via `$global:__logging = $true`
+    - Disable globally via `$global:__logging = $false`
 - **Easy-to-use** aliases: `miniforge`, `imini`
-- **easy-intergration** with other modules and scripts, modules comes as a standard module allowing `import-module` or can be loaded as a module via `using module .\Invoke-miniforge.psm1`
+- **Flexible Integration**: Import as a module or load via `using module`
 
 ## Getting Started
 
-### 🔨 Using the module as standalone library `.psm1`
+### 🔨 Installation
 
-1. if you want to use this module as a normal module download the module from [https://github.com/sgkens/miniforge)](https://github.com/sgkens/miniforge) navigate to the `miniforge` folder and execute:
-    ```powershell
-    cd miniforge
-    Import-Module .\
-    ```
+1. Download or clone the module from [https://github.com/sgkens/miniforge](https://github.com/sgkens/miniforge)
+2. Navigate to the `miniforge` directory
 
-### 🔨 Using the module as as a normal module
+### 🔨 Loading the Module
 
-2. if you want to use the module as a standalone library module, download the module from [https://github.com/sgkens/miniforge)](https://github.com/sgkens/miniforge)  and extract the `miniforge.psm1` file into a folder on your system.
-3.  Load the module into your script environment:
-    ```powershell
-    using module .\Invoke-miniforge.psm1
-    ```
+**Option 1: Import Module (Standard)**
 
-## 🟡 Invoke-Miniforge 
+```powershell
+cd path\to\miniforge
+Import-Module .\miniforge.psm1
+```
 
-***Alias***: `miniforge` `imini`
+**Option 2: Using Module Statement**
 
-This is the main function exposed by the module.
+```powershell
+using module .\miniforge.psm1
+```
 
-### Parameters
+**Option 3: Install to PowerShell Modules Path**
+
+Copy the entire `miniforge` folder to one of your PowerShell module paths, then:
+
+```powershell
+Import-Module miniforge
+```
+
+To find your module paths, run: `$env:PSModulePath -split ';'`
+
+## Cmdlets
+
+### 🟡 Invoke-ForgeAction
+
+**Aliases**: `miniforge`, `imini`
+
+This is the main (and only) function exposed by the module.
+
+#### Parameters
 
 | Name       | Type                                  | Description                                                          | Required |
 | :--------- | :------------------------------------ | :------------------------------------------------------------------- | :------- |
-| **Data**   | `Hashtable, PSObject, PSCustomObject` | The target data structure to modify.                                 | Yes      |
-| **Action** | `String`                              | The operation to perform: `add`, `update`, `remove`, `push`, `pull`. | Yes      |
-| **Name**   | `String`                              | The property or key name to target.                                  | Yes      |
-| **Value**  | `PSObject`                            | The value to set (for add/update/push) or remove (for pull).         | No       |
-| **debug**  | `SwitchParameter`                     | Enable debug logging.                                                | No       |
+| **Data**   | *PSObject*, *PSCustomObject*, *Hashtable*, *Dictionary*, *SortedList* | The target data structure to modify. | Yes |
+| **Action** | *String* | The operation to perform: `create`, `read`, `update`, `delete`, `push`, `pull` | Yes |
+| **Name**   | *String* | The property or key name to target. | Yes |
+| **Value**  | *Any* | The value to set (for create/update/push) or remove (for pull). Not required for read/delete. | No |
 
-> **Note!** \
-> `Debug` Mode can be enabled via the global variable `$global:__miniforge.debug` or via the `debug` switch parameter.
+#### Logging Control
+
+**Enable logging globally:**
+
+```powershell
+$global:__logging = $true
+```
+
+**Disable logging globally:**
+
+```powershell
+$global:__logging = $false
+```
 
 ## Examples
 
-### `🟣` Adding a Property to a PSCustomObject
+### **Create**
+
+✳️ **Adding a Property to a PSCustomObject**
 
 ```powershell
 $obj = [PSCustomObject]@{ ID = 1 }
-Invoke-miniforge -Data $obj -Action add -Name 'Status' -Value 'New'
+Invoke-ForgeAction -Data $obj -Action create -Name 'Status' -Value 'Active'
+# Output: $obj now has { ID = 1; Status = 'Active' }
 ```
-***🔺ShortHand***
+
+**Shorthand:**
 
 ```powershell
-miniforge -d $obj -a add -n 'Status' -v 'New'
+miniforge -Data $obj -Action create -Name 'Status' -Value 'Active'
+# or even shorter with aliases:
+imini $obj create 'Status' 'Active'
 ```
 
-The above example adds a new property named 'Status' to the PSCustomObject `$obj` with the value 'New'.
+✳️ **Adding a Key to a Hashtable**
 
-### `🟣` Updating a Key in a Hashtable
-
-```PowerShell
-$ht = @{ Price = 100.00 }
-Invoke-miniforge -Data $ht -Action update -Name 'Price' -Value 109.99
+```powershell
+$ht = @{ Name = 'Test' }
+Invoke-ForgeAction -Data $ht -Action create -Name 'Price' -Value 99.99
+# Output: $ht now has @{ Name = 'Test'; Price = 99.99 }
 ```
 
-***🔺ShortHand***
+✳️ **Adding to a Dictionary**
 
-```PowerShell
-miniforge -d $ht -a update -n 'Price' -v 109.99
+```powershell
+$dict = [System.Collections.Generic.Dictionary[string,string]]::new()
+Invoke-ForgeAction -Data $dict -Action create -Name 'Server' -Value 'localhost'
 ```
 
-The above example updates the value of the 'Price' key in the Hashtable `$ht`.
+> **Note:** The `create` action will prevent overwriting existing properties. Use `update` to modify existing values.
 
-### `🟣` Pushing an Item to an Array
+---
 
-This action is only allowed if the target property's value is currently an array (string[], object[], etc.).
+### **Update**
 
-```PowerShell
+✳️ **Updating a Key in a Hashtable**
 
+```powershell
+$ht = @{ Price = 100.00; Name = 'Product' }
+Invoke-ForgeAction -Data $ht -Action update -Name 'Price' -Value 109.99
+# Output: $ht now has @{ Price = 109.99; Name = 'Product' }
+```
+
+**Shorthand:**
+
+```powershell
+miniforge $ht update 'Price' 109.99
+```
+
+✳️ **Updating a PSCustomObject Property**
+
+```powershell
+$obj = [PSCustomObject]@{ Status = 'Pending'; Count = 10 }
+Invoke-ForgeAction -Data $obj -Action update -Name 'Status' -Value 'Complete'
+# Output: $obj now has { Status = 'Complete'; Count = 10 }
+```
+
+> **Note:** The `update` action will warn if the property doesn't exist. Use `create` to add new properties.
+
+---
+
+### **Push** 
+
+✳️ **Pushing an Item to an Array Property**
+
+The `push` action appends a value to an existing array. The target property must already be an array type.
+
+```powershell
 $obj = [PSCustomObject]@{ Tags = @('red', 'green') }
-Invoke-miniforge -Data $obj -Action push -Name 'Tags' -Value 'blue'
+Invoke-ForgeAction -Data $obj -Action push -Name 'Tags' -Value 'blue'
+# Output: $obj.Tags is now @('red', 'green', 'blue')
 ```
 
-***🔺ShortHand***
+**Shorthand:**
 
-```PowerShell
-miniforge -d $obj -a push -n 'Tags' -v 'blue'
+```powershell
+miniforge $obj push 'Tags' 'blue'
 ```
 
-The above example pushes the value 'blue' to the 'Tags' array in the PSCustomObject `$obj`.
+✳️ **Pushing to a Hashtable Array**
 
-### `🟣` Pulling (Removing) an Item from an Array
+```powershell
+$config = @{ Servers = @('server1', 'server2') }
+Invoke-ForgeAction -Data $config -Action push -Name 'Servers' -Value 'server3'
+# Output: $config.Servers is now @('server1', 'server2', 'server3')
+```
 
-This action removes the specified Value from the array property.
+✳️ **Supported Array Types**
 
-```PowerShell
+```powershell
+# Works with: [string[]], [object[]], [int[]], [hashtable[]], [psobject[]], [pscustomobject[]]
+$data = @{ Numbers = @(1, 2, 3) }
+Invoke-ForgeAction -Data $data -Action push -Name 'Numbers' -Value 4
+```
 
+> **Note:** The property must already exist as an array. Use `create` first to initialize array properties.
+
+---
+
+### **Pull** 
+
+✳️ **Pulling (Removing) an Item from an Array**
+
+The `pull` action removes a specific value from an array property.
+
+```powershell
 $ht = @{ Colors = @('red', 'green', 'blue') }
-Invoke-miniforge -Data $ht -Action pull -Name 'Colors' -Value 'green'
+Invoke-ForgeAction -Data $ht -Action pull -Name 'Colors' -Value 'green'
+# Output: $ht.Colors is now @('red', 'blue')
 ```
 
-The above example removes the value 'green' from the 'Colors' array in the Hashtable `$ht`.
+**Shorthand:**
 
-### `🟣` Removing a Property from a PSCustomObject
-
-This action removes the specified property from the PSCustomObject.
-
-```PowerShell
-
-$obj = [PSCustomObject]@{ ID = 1 }
-Invoke-miniforge -Data $obj -Action remove -Name 'ID'
+```powershell
+miniforge $ht pull 'Colors' 'green'
 ```
 
-The above example removes the 'ID' property from the PSCustomObject `$obj`.
+✳️ **Removing from PSCustomObject Array**
 
-### `🟣` Removing a Key from a Hashtable
-
-This action removes the specified key from the Hashtable.
-
-```PowerShell
-
-$ht = @{ Price = 100.00 }
-Invoke-miniforge -Data $ht -Action remove -Name 'Price'
+```powershell
+$user = [PSCustomObject]@{ Roles = @('Admin', 'Editor', 'Viewer') }
+Invoke-ForgeAction -Data $user -Action pull -Name 'Roles' -Value 'Editor'
+# Output: $user.Roles is now @('Admin', 'Viewer')
 ```
 
-The above example removes the 'Price' key from the Hashtable `$ht`.
+> **Note:** If the value appears multiple times in the array, all instances will be removed.
 
-# TODO
+---
 
-- [ ] Add tests
+### **Delete** 
+
+✳️ **Removing a Property from a PSCustomObject**
+
+The `delete` action completely removes a property or key from the data structure.
+
+```powershell
+$obj = [PSCustomObject]@{ ID = 1; Name = 'Test'; Status = 'Active' }
+Invoke-ForgeAction -Data $obj -Action delete -Name 'Status'
+# Output: $obj now has { ID = 1; Name = 'Test' }
+```
+
+**Shorthand:**
+
+```powershell
+miniforge $obj delete 'Status'
+```
+
+✳️ **Removing a Key from a Hashtable**
+
+```powershell
+$ht = @{ Price = 100.00; Name = 'Product'; SKU = 'ABC123' }
+Invoke-ForgeAction -Data $ht -Action delete -Name 'SKU'
+# Output: $ht now has @{ Price = 100.00; Name = 'Product' }
+```
+
+✳️ **Removing from Dictionary or SortedList**
+
+```powershell
+$dict = [System.Collections.Generic.Dictionary[string,string]]::new()
+$dict.Add('Key1', 'Value1')
+$dict.Add('Key2', 'Value2')
+Invoke-ForgeAction -Data $dict -Action delete -Name 'Key1'
+# Output: $dict only contains Key2
+```
+
+> **Note:** The `delete` action will warn if the property doesn't exist.
+
+
+---
+
+### **Read** 
+
+✳️ **Getting a Property Value**
+
+The `read` action retrieves the value of a property or key from the data structure.
+
+```powershell
+$obj = [PSCustomObject]@{ ID = 1; Name = 'TestUser'; Email = 'test@example.com' }
+$id = Invoke-ForgeAction -Data $obj -Action read -Name 'ID'
+# Output: $id contains 1
+```
+
+**Shorthand:**
+
+```powershell
+$email = miniforge $obj read 'Email'
+```
+
+✳️ **Reading from a Hashtable**
+
+```powershell
+$config = @{ Server = 'localhost'; Port = 8080; SSL = $true }
+$port = Invoke-ForgeAction -Data $config -Action read -Name 'Port'
+# Output: $port contains 8080
+```
+
+✳️ **Reading from Dictionary**
+
+```powershell
+$settings = [System.Collections.Generic.Dictionary[string,string]]::new()
+$settings.Add('Theme', 'Dark')
+$theme = Invoke-ForgeAction -Data $settings -Action read -Name 'Theme'
+# Output: $theme contains 'Dark'
+```
+
+> **Note:** The `read` action returns `$null` and logs a warning if the property doesn't exist.
+
+---
+
+## Complete Example Workflow
+
+Here's a comprehensive example showing multiple operations:
+
+```powershell
+# Import the module
+Import-Module .\miniforge.psm1
+
+# Enable logging to see what's happening
+$global:__logging = $true
+
+# Create a configuration object
+$appConfig = [PSCustomObject]@{
+    AppName = 'MyApp'
+    Version = '1.0.0'
+    Features = @('Auth', 'API')
+}
+
+# Add a new property
+Invoke-ForgeAction -Data $appConfig -Action create -Name 'Environment' -Value 'Development'
+
+# Update the version
+Invoke-ForgeAction -Data $appConfig -Action update -Name 'Version' -Value '1.1.0'
+
+# Add a feature to the array
+Invoke-ForgeAction -Data $appConfig -Action push -Name 'Features' -Value 'Logging'
+
+# Read a value
+$env = Invoke-ForgeAction -Data $appConfig -Action read -Name 'Environment'
+Write-Host "Current Environment: $env"
+
+# Remove a feature from the array
+Invoke-ForgeAction -Data $appConfig -Action pull -Name 'Features' -Value 'API'
+
+# Delete a property
+Invoke-ForgeAction -Data $appConfig -Action delete -Name 'Environment'
+
+# Display final result
+$appConfig | Format-List
+```
+
+---
+
+## Supported Data Types Comparison
+
+| Data Type | Create | Read | Update | Delete | Push/Pull Arrays |
+|:----------|:------:|:----:|:------:|:------:|:----------------:|
+| **Hashtable** | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **PSObject** | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **PSCustomObject** | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Dictionary** | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **SortedList** | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+**Array Support**: `[string[]]`, `[object[]]`, `[int[]]`, `[hashtable[]]`, `[psobject[]]`, `[pscustomobject[]]`
+
+---
+
+## Advanced Usage
+
+### Working with Nested Objects
+
+```powershell
+$server = @{
+    Config = @{
+        Host = 'localhost'
+        Port = 8080
+    }
+}
+
+# Access nested hashtable and modify it
+$nestedConfig = $server.Config
+Invoke-ForgeAction -Data $nestedConfig -Action update -Name 'Port' -Value 9090
+```
+
+### Pipeline Support
+
+```powershell
+# The Data parameter accepts pipeline input
+$myHashtable = @{ Status = 'Active' }
+$myHashtable | Invoke-ForgeAction -Action create -Name 'Count' -Value 100
+```
+
+### Disable Logging for Production
+
+```powershell
+# At the start of your script
+$global:__logging = $false
+
+# All Invoke-ForgeAction calls will now run silently
+miniforge $data create 'Key' 'Value'
+```
+
+---
+
+## Troubleshooting
+
+### Property Already Exists Error
+
+If you see a warning about a property already existing when using `create`:
+
+```powershell
+# Use update instead of create for existing properties
+Invoke-ForgeAction -Data $obj -Action update -Name 'ExistingProp' -Value 'NewValue'
+```
+
+### Property Not Found Error
+
+If you see a warning about a property not found when using `update`, `read`, or `delete`:
+
+```powershell
+# Use create first to add the property
+Invoke-ForgeAction -Data $obj -Action create -Name 'NewProp' -Value 'Value'
+```
+
+### Push/Pull Only Works on Arrays
+
+The `push` and `pull` actions require the property to be an array:
+
+```powershell
+# First, create an array property
+Invoke-ForgeAction -Data $obj -Action create -Name 'Items' -Value @()
+
+# Then push values to it
+Invoke-ForgeAction -Data $obj -Action push -Name 'Items' -Value 'Item1'
+```
+
+---
+
+## 📋 TODO
+
+- [x] Add Support for Dictionary, SortedList
+- [ ] Add comprehensive Pester tests
+- [ ] Create module manifest (.psd1) with proper versioning
+- [ ] Add support for OrderedDictionary
+- [ ] Optimize performance for large datasets
+- [ ] Add `-WhatIf` and `-Confirm` support
+
+---
 
 ## 📝 License
 
 This module is released under the [MIT License](https://opensource.org/licenses/MIT).
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+---
+
+## 📧 Contact
+
+For issues, questions, or suggestions, please open an issue on the [GitHub repository](https://github.com/sgkens/miniforge).
