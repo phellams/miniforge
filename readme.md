@@ -25,6 +25,7 @@ The **MiniForge** module provides the `Invoke-ForgeAction` function (with aliase
   - [🟠 ***Pull***](#pull)
   - [🔴 ***Delete***](#delete)
   - [🔵 ***Read***](#read)
+- [Data Accelerators](#data-accelerators)
 - [Complete Example Workflow](#complete-example-workflow)
 - [Supported Data Types](#supported-data-types-comparison)
 - [Advanced Usage](#advanced-usage)
@@ -103,7 +104,7 @@ Import-Module miniforge
 
 To find your module paths, run: `$env:PSModulePath -split ';'`
 
-## Cmdlets
+# Cmdlets
 
 ### 🟢 Invoke-ForgeAction
 
@@ -134,7 +135,7 @@ $global:__logging = $true
 $global:__logging = $false
 ```
 
-## Examples
+# Examples
 
 ### **Create**
 
@@ -348,6 +349,52 @@ $theme = Invoke-ForgeAction -Data $settings -Action read -Name 'Theme'
 > **Note:** The `read` action returns `$null` and logs a warning if the property doesn't exist.
 
 ---
+
+### 🟢 Convert-IminiData
+
+
+
+# Data Accelerators
+
+### 🔷 Iminpso
+
+Generates a `PSObject` from `hashtable`.
+
+```powershell
+$pso = iminipso @{ prop1 = 'prop1value'; level = 1 }
+```
+
+### 🔷  Iminipsco
+
+Generates a `PSCustomObject` from `hashtable`.
+
+```powershell
+$psco = iminipsco @{ prop1 = 'prop1value'; level = 1 }
+```
+
+### 🔷 Iminiht
+
+Generates a `Hashtable` from `hashtable`.
+
+```powershell
+$psht = iminipsco @{ prop1 = 'prop1value'; level = 1 }
+```
+
+### 🔷 iminidic
+
+Generates a `System.Collections.Generic.Dictionary[string, object]` from `Hashtable`.
+
+```powershell
+$psdic = iminidic @{ prop1 = 'prop1value'; level = 1 }
+```
+
+### 🔷 iminisl
+
+Generates a `System.Collections.SortedList` from `Hashtable`.
+
+```powershell
+$psdsl = iminisl @{ prop1 = 'prop1value'; level = 1 }
+```
 
 ## Complete Example Workflow
 
