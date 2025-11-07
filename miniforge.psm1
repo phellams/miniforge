@@ -1,6 +1,56 @@
+using namespace IMiniData
+
 $global:__logging = $true
 $global:__miniforge = @{ rootpath = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition }
 
+function Convert-IminiData {
+    [CmdletBinding()]
+    [Alias('iminidata')]
+    param(
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [psobject]$InputData,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateSet('Hashtable', 'PSObject', 'PSCustomObject', 'SortedList', 'Dictionary')]
+        [string]$Type
+    )
+
+    process {
+        switch ($Type) {
+            'Hashtable' {
+                # $InputData properties are copied to a new Hashtable
+                $Data = @{}
+                $InputData.PSObject.Properties | ForEach-Object { $Data[$_.Name] = $_.Value }
+            }
+            'PSObject' {
+                # Since the accelerator already created a PSCustomObject, just return it
+                $Data = $InputData
+                $Data.PSTypeNames.Insert(0, 'System.Management.Automation.PSObject')
+            }
+            'PSCustomObject' {
+                # Already a PSCustomObject from the C# accelerator
+                $Data = $InputData
+            }
+            'SortedList' {
+                $Data = New-Object -TypeName System.Collections.SortedList
+                $InputData.PSObject.Properties | ForEach-Object { 
+                    [void]$Data.Add($_.Name, $_.Value) 
+                }
+            }
+            'Dictionary' {
+                $Data = New-Object -TypeName 'System.Collections.Generic.Dictionary[string, object]'
+                $InputData.PSObject.Properties | ForEach-Object { 
+                    [void]$Data.Add($_.Name, $_.Value) 
+                }
+            }
+            default {
+                # Fallback to PSCustomObject
+                $Data = $InputData
+            }
+        }
+        return $Data
+    }
+}
 
 # ---- Helper Functions ----
 function kvinc([string]$keyName, [string]$KeyValue, [string]$type='none') {
@@ -137,6 +187,59 @@ function check_collections_other($dataSet) {
 
 }
 
+# ===================================================================
+# IMini Data Accelerators - Function-Based Approach
+# ===================================================================
+
+function iminipsco {
+    param([Hashtable]$data)
+    $pso = [PSCustomObject]::new()
+    if ($data) {
+        foreach ($key in $data.Keys) {
+            $pso.PSObject.Properties.Add([PSNoteProperty]::new($key, $data[$key]))
+        }
+    }
+    return $pso
+}
+
+function iminipso {
+    param([Hashtable]$data)
+    $pso = [PSObject]::new()
+    if ($data) {
+        foreach ($key in $data.Keys) {
+            $pso.PSObject.Properties.Add([PSNoteProperty]::new($key, $data[$key]))
+        }
+    }
+    return $pso
+}
+
+function iminiht {
+    param([Hashtable]$data)
+    return $data ?? @{}
+}
+
+function iminidic {
+    param([Hashtable]$data)
+    $dic = [System.Collections.Generic.Dictionary[string, object]]::new()
+    if ($data) {
+        foreach ($key in $data.Keys) {
+            $dic.Add($key.ToString(), $data[$key])
+        }
+    }
+    return $dic
+}
+
+function iminisl {
+    param([Hashtable]$data)
+    $sl = [System.Collections.SortedList]::new()
+    if ($data) {
+        foreach ($key in $data.Keys) {
+            $sl.Add($key, $data[$key])
+        }
+    }
+    return $sl
+}
+
 # ---- Helper Functions ----
 
 # ---- Main Function: Invoke-ForgeAction ----
@@ -184,7 +287,7 @@ function Invoke-ForgeAction {
         $Data,
 
         [Parameter(Mandatory = $true)]
-        [ValidateSet('create', 'read', 'update', 'delete', 'push', 'pull')]
+        [ValidateSet('create', 'read', 'update', 'delete', 'push', 'pull', 'build')]
         [string]$Action,
 
         [Parameter(Mandatory = $true)]
@@ -404,9 +507,8 @@ function Invoke-ForgeAction {
 }
 
 $module_config = @{
-    function = @('Invoke-ForgeAction')
-    alias    = @('miniforge', 'imini')
+    function = @('Invoke-ForgeAction', 'Convert-IminiData', 'iminipsco', 'iminipso', 'iminiht', 'iminidic', 'iminisl')
+    alias    = @('miniforge', 'imini', 'iminipsco', 'iminipso', 'iminiht', 'iminidic', 'iminisl', 'iminidata')
 }
-
 
 Export-ModuleMember @module_config
