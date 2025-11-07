@@ -1,7 +1,7 @@
 @{
 
     RootModule             = "miniforge.psm1"
-    ModuleVersion          = '0.2.2'
+    ModuleVersion          = '0.3.1'
     CompatiblePSEditions   = @()
     GUID                   = '019a5fd1-507f-7ac9-afb2-68e6f3f7bb89' # TODO: Generate a new GUID
     Author                 = 'Garvey k. Snow'
